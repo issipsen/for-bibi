@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>มีอะไรจาาบอกกก</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;600&family=IBM+Plex+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: tender, quiet, a little playful at the end
+   IDEA: a love note read by scrolling down through a night sky, word by word
+   PICTURE: one glowing line of words pinned mid-screen, then one blush card, hearts drifting up
+   COLOUR and TYPE: wine #2a0a17 ground, blush #ffd3dc card, coral #ff4d6d accent; Mitr titles, IBM Plex Sans Thai body
+   LAYOUT: full-height bands stacked down the page; story pinned while scrolling */
+:root{color-scheme:dark;--bg:#2a0a17;--bg2:#46122a;--card:#ffd3dc;--ink:#3a0d1f;--soft:#ffe9ee;--accent:#ff4d6d;--muted:#f3a9bb}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:linear-gradient(var(--bg) 0%,var(--bg2) 55%,var(--bg) 100%);color:var(--soft);font:17px/1.6 "IBM Plex Sans Thai",system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+.sky{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.sky svg{position:absolute;bottom:-40px;fill:var(--accent);opacity:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.5}100%{transform:translateY(-115vh) scale(1);opacity:0}}
+section{position:relative;z-index:1}
+.screen{min-height:100vh;min-height:100svh;display:grid;place-items:center;padding:24px 16px;text-align:center}
+.wrap{width:min(520px,100%)}
+h1{font:600 clamp(34px,8vw,52px)/1.1 Mitr,sans-serif;margin:0 0 12px;text-wrap:balance}
+.lead{color:var(--muted);margin:0}
+.down{margin-top:40px;display:inline-flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-size:15px}
+.down svg{width:26px;height:26px;stroke:var(--muted);fill:none;stroke-width:2;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(8px)}}
+.btn{font:500 17px/1 "IBM Plex Sans Thai",sans-serif;min-height:48px;padding:0 28px;border-radius:999px;border:0;cursor:pointer;background:var(--accent);color:#fff;box-shadow:0 8px 24px -8px var(--accent);transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:focus-visible{outline:3px solid var(--soft);outline-offset:3px}
+.btn.ghost{background:transparent;color:var(--soft);box-shadow:inset 0 0 0 2px var(--muted)}
+/* story: pinned while scrolling */
+#story{position:relative}
+.pin{position:sticky;top:0;height:100vh;height:100svh;display:grid;place-items:center;padding:24px 16px;text-align:center}
+.line{font:400 clamp(26px,6vw,38px)/1.45 Mitr,sans-serif;text-wrap:balance;width:min(620px,100%);margin:0}
+.line span{display:inline-block;opacity:0;filter:blur(8px);transform:translateY(10px);transition:opacity .45s,filter .45s,transform .45s}
+.line span.on{opacity:1;filter:none;transform:none}
+.bar{position:absolute;left:50%;bottom:28px;width:120px;height:3px;margin-left:-60px;border-radius:3px;background:#ffffff22;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent)}
+/* scratch */
+.card{position:relative;background:var(--card);color:var(--ink);border-radius:22px;padding:26px 22px;box-shadow:0 30px 60px -20px #000,inset 0 0 0 6px #fff6;overflow:hidden;user-select:none}
+.card img,.card .ph{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;display:block;margin-bottom:16px;background:#ffb8c7}
+.card .ph{display:grid;place-items:center}
+.secret{font:600 clamp(20px,4.6vw,26px)/1.35 Mitr,sans-serif;margin:0;text-wrap:balance}
+#scratch{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity .6s}
+.hint{color:var(--muted);font-size:15px;margin:16px 0 0;min-height:24px}
+/* question */
+#s3[hidden],#s4[hidden]{display:none}
+.ask{font:600 clamp(32px,8vw,52px)/1.1 Mitr,sans-serif;margin:0 0 30px;text-wrap:balance}
+.row{display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:120px}
+#yes{transition:transform .25s}
+#no{transition:left .25s ease,top .25s ease;z-index:5}
+#no.loose{position:fixed}
+#no.away{visibility:hidden}
+/* end */
+#s4{position:fixed;inset:0;z-index:10;background:radial-gradient(90% 70% at 50% 60%,var(--bg2),var(--bg));animation:fade .6s ease both}
+@keyframes fade{from{opacity:0}}
+.big{font:600 clamp(44px,11vw,72px)/1 Mitr,sans-serif;color:var(--accent);margin:0 0 16px}
+.pop{position:fixed;pointer-events:none;fill:var(--accent);z-index:20;animation:pop 1.6s ease-out forwards}
+@keyframes pop{to{transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(.4);opacity:0}}
+.mute{position:fixed;top:12px;right:12px;z-index:30;width:44px;height:44px;border-radius:50%;border:0;background:#ffffff1a;color:var(--soft);font-size:18px;cursor:pointer;display:none}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}.sky{display:none}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<button class="mute" id="mute" aria-label="ปิดเสียงเพลง">♪</button>
+
+<section class="screen" id="s0">
+  <div class="wrap">
+    <h1 id="hello"></h1>
+    <p class="lead">มีอะไรจาบอกกก</p>
+    <div class="down"><span>ค่อยๆเลื่อนลงนะ</span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div>
+  </div>
+</section>
+
+<section id="story">
+  <div class="pin">
+    <p class="line" id="line" aria-live="polite"></p>
+    <div class="bar"><i id="bar"></i></div>
+  </div>
+</section>
+
+<section class="screen" id="s2">
+  <div class="wrap">
+    <div class="card" id="card">
+      <div id="photo"></div>
+      <p class="secret" id="secret"></p>
+      <canvas id="scratch"></canvas>
+    </div>
+    <p class="hint" id="hint">ใช้นิ้วหรือเมาส์ขูดการ์ดดูนะ</p>
+  </div>
+</section>
+
+<section class="screen" id="s3" hidden>
+  <div class="wrap">
+    <p class="ask" id="ask"></p>
+    <div class="row">
+      <button class="btn" id="yes">ตกลง</button>
+      <button class="btn ghost" id="no">ไม่</button>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s4" hidden>
+  <div class="wrap">
+    <p class="big">เย้!</p>
+    <h1 id="endTitle"></h1>
+    <p class="lead" id="endText"></p>
+  </div>
+</section>
+
+<script>
+{
+/* ===== แก้ข้อความตรงนี้ ===== */
+const CONFIG = {
+  to: "บิบิ๋",                      // ชื่อคนที่จะส่งให้
+  from: "♥",                      // ชื่อเรา
+  story: [                           // ข้อความที่โผล่ทีละคำตอนเลื่อนลง (เว้นวรรคตรงไหน = แยกคำตรงนั้น)
+    "มีเรื่องหนึ่ง ที่เก็บไว้ ซักพักแล้วหนะ",
+    "ตั้งใจจะบอกตั้งแต่วันลอยกระทงแยะ",
+    "แต่ติดอยู่ที่ปาก พอเค้าจุ้บบิบิ๋ก็ลืมไปหม๊ดดด"
+  ],
+  scrollPerWord: 18,                 // ระยะเลื่อนต่อ 1 คำ (หน่วย % ของความสูงจอ) ยิ่งมากยิ่งช้า
+  secret: "เป็นแฟนกันม้ายย",     // ข้อความใต้การ์ดขูด
+  photo: "",                         // ใส่ path รูป เช่น "us.jpg" หรือ data URL (เว้นว่างได้)
+  question: "เป็นม้ายย ?",
+  noTexts: ["ไม่", "แน่ใจหย๋ออ?", "คิดอีกทีดะม้ายย", "กดไม่โดนหรอกกก", "แหนะะ"],
+  endTitle: "ได้เป็นแฟนบิบิ๋แล้ววววววววววว",
+  endText: "น่ารักที่สุ้ดดดดด",
+  music: ""                          // path ไฟล์เพลง .mp3 (เว้นว่างได้)
+};
+/* ========================== */
+
+const $ = id => document.getElementById(id);
+const heart = 'M12 21s-7.5-4.6-10-9.3C.3 8.4 2.2 4 6.2 4c2.3 0 3.8 1.3 5.8 3.5C14 5.3 15.5 4 17.8 4c4 0 5.9 4.4 4.2 7.7C19.5 16.4 12 21 12 21z';
+const svgHeart = s => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><path d="${heart}"/></svg>`;
+
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+scrollTo(0, 0);
+
+$('hello').textContent = `ถึง ${CONFIG.to}`;
+$('secret').textContent = CONFIG.secret;
+$('ask').textContent = `${CONFIG.to} ${CONFIG.question}`;
+$('endTitle').textContent = CONFIG.endTitle;
+$('endText').textContent = `${CONFIG.endText} — ${CONFIG.from}`;
+if (CONFIG.photo) {
+  const img = new Image(); img.alt = ''; img.src = CONFIG.photo; $('photo').append(img);
+} else {
+  $('photo').innerHTML = `<div class="ph">${svgHeart(96).replace('<svg', '<svg style="fill:#ff4d6d"')}</div>`;
+}
+
+// background hearts
+for (let i = 0; i < 14; i++) {
+  const d = document.createElement('div');
+  d.innerHTML = svgHeart(10 + Math.random() * 22);
+  const s = d.firstChild;
+  s.style.left = Math.random() * 100 + 'vw';
+  s.style.animationDuration = 9 + Math.random() * 10 + 's';
+  s.style.animationDelay = -Math.random() * 15 + 's';
+  $('sky').append(s);
+}
+
+// music starts on the first tap / key (browsers block autoplay on scroll alone)
+let audio = null;
+if (CONFIG.music) {
+  audio = new Audio(CONFIG.music); audio.loop = true;
+  const start = () => {
+    audio.play().then(() => { $('mute').style.display = 'block'; }).catch(() => {});
+    removeEventListener('pointerdown', start); removeEventListener('keydown', start);
+  };
+  addEventListener('pointerdown', start); addEventListener('keydown', start);
+  $('mute').addEventListener('click', e => {
+    e.stopPropagation();
+    if (audio.paused) { audio.play().catch(() => {}); $('mute').textContent = '♪'; }
+    else { audio.pause(); $('mute').textContent = '×'; }
+  });
+}
+
+// story: words appear as you scroll
+const lines = CONFIG.story.map(l => l.split(' '));
+const total = lines.reduce((n, l) => n + l.length, 0);
+const story = $('story'), lineEl = $('line'), bar = $('bar');
+story.style.height = `calc(100svh + ${total * CONFIG.scrollPerWord + 40}svh)`;
+let curLine = -1;
+function renderLine(i) {
+  curLine = i;
+  lineEl.innerHTML = '';
+  lines[i].forEach((w, k) => {
+    const sp = document.createElement('span');
+    sp.textContent = w + (k < lines[i].length - 1 ? ' ' : '');
+    lineEl.append(sp);
+  });
+}
+function onScroll() {
+  const r = story.getBoundingClientRect();
+  const range = story.offsetHeight - innerHeight;
+  const p = Math.min(Math.max(-r.top / range, 0), 1);
+  bar.style.width = p * 100 + '%';
+  // words shown so far (last bit of scroll keeps the final line on screen)
+  let shown = Math.floor(p * (total + 1.5));
+  let li = 0;
+  while (li < lines.length - 1 && shown > lines[li].length) { shown -= lines[li].length; li++; }
+  if (li !== curLine) renderLine(li);
+  [...lineEl.children].forEach((sp, k) => sp.classList.toggle('on', k < shown));
+  // hide the runaway button while the question is off screen
+  const q = $('s3').getBoundingClientRect();
+  no.classList.toggle('away', no.classList.contains('loose') && (q.bottom < 0 || q.top > innerHeight));
+}
+addEventListener('scroll', onScroll, { passive: true });
+addEventListener('resize', onScroll);
+
+// scratch card
+let scratched = false, scratchW = 0;
+function setupScratch() {
+  if (scratched) return;
+  const c = $('scratch'), card = $('card'), ctx = c.getContext('2d');
+  const r = card.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  if (Math.round(r.width) === scratchW) return;
+  scratchW = Math.round(r.width);
+  c.width = r.width * dpr; c.height = r.height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.globalCompositeOperation = 'source-over';
+  const g = ctx.createLinearGradient(0, 0, r.width, r.height);
+  g.addColorStop(0, '#ff8fa6'); g.addColorStop(1, '#ff4d6d');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, r.width, r.height);
+  ctx.fillStyle = '#ffffffcc';
+  for (let y = 20; y < r.height; y += 46) for (let x = (y / 46 % 2) * 23 + 10; x < r.width; x += 46) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(.7, .7); ctx.fill(new Path2D(heart)); ctx.restore();
+  }
+  ctx.fillStyle = '#fff'; ctx.font = '600 22px Mitr, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('ขูดตรงนี้', r.width / 2, r.height / 2 + 8);
+  ctx.globalCompositeOperation = 'destination-out';
+}
+{
+  const c = $('scratch'), ctx = c.getContext('2d');
+  let down = false, last = null, moves = 0;
+  const pos = e => { const b = c.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
+  const check = () => {
+    const d = ctx.getImageData(0, 0, c.width, c.height).data;
+    let clear = 0, n = 0;
+    for (let i = 3; i < d.length; i += 4 * 40) { n++; if (d[i] === 0) clear++; }
+    if (clear / n > 0.5 && !scratched) reveal();
+  };
+  const draw = p => {
+    ctx.lineWidth = 44; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(...(last || p)); ctx.lineTo(...p); ctx.stroke();
+    ctx.beginPath(); ctx.arc(...p, 22, 0, Math.PI * 2); ctx.fill();
+    last = p;
+    if (++moves % 12 === 0) check();
+  };
+  const reveal = () => {
+    scratched = true; c.style.opacity = 0; c.style.pointerEvents = 'none';
+    $('hint').textContent = 'นี่แหละ เรื่องที่อยากบอก';
+    burst($('card'));
+    $('s3').hidden = false;
+    setTimeout(() => $('s3').scrollIntoView({ behavior: 'smooth' }), 1400);
+  };
+  c.addEventListener('pointerdown', e => { down = true; last = null; c.setPointerCapture(e.pointerId); draw(pos(e)); });
+  c.addEventListener('pointermove', e => { if (down) draw(pos(e)); });
+  c.addEventListener('pointerup', () => { down = false; check(); });
+  c.addEventListener('pointercancel', () => { down = false; });
+}
+const ro = new ResizeObserver(setupScratch);
+ro.observe($('card'));
+document.fonts && document.fonts.ready.then(() => { scratchW = 0; setupScratch(); });
+
+// question: the No button runs away
+let tries = 0, yesScale = 1;
+const no = $('no'), yes = $('yes');
+function flee(e) {
+  e.preventDefault();
+  tries++;
+  no.textContent = CONFIG.noTexts[Math.min(tries, CONFIG.noTexts.length - 1)];
+  yesScale = Math.min(yesScale + 0.15, 1.9);
+  yes.style.transform = `scale(${yesScale})`;
+  const b = no.getBoundingClientRect(), y = yes.getBoundingClientRect();
+  if (!no.classList.contains('loose')) {
+    no.style.left = b.left + 'px'; no.style.top = b.top + 'px'; no.classList.add('loose');
+  }
+  const pad = 16, W = innerWidth - b.width - pad, H = innerHeight - b.height - pad;
+  let x, t, guard = 0;
+  do {
+    x = pad + Math.random() * (W - pad); t = pad + Math.random() * (H - pad); guard++;
+  } while (guard < 30 && (Math.hypot(x - b.left, t - b.top) < 140 ||
+    (x < y.right + 20 && x + b.width > y.left - 20 && t < y.bottom + 20 && t + b.height > y.top - 20)));
+  requestAnimationFrame(() => { no.style.left = x + 'px'; no.style.top = t + 'px'; });
+}
+no.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') flee(e); });
+no.addEventListener('pointerdown', flee);
+no.addEventListener('click', flee);
+no.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') flee(e); });
+
+yes.addEventListener('click', () => {
+  no.remove(); $('s4').hidden = false; document.body.style.overflow = 'hidden';
+  let n = 0; const t = setInterval(() => { burst(document.body); if (++n > 4) clearInterval(t); }, 350);
+});
+
+// hearts burst
+function burst(el) {
+  const r = el.getBoundingClientRect();
+  const cx = r.left + r.width / 2, cy = Math.min(r.top + r.height / 2, innerHeight / 2);
+  for (let i = 0; i < 18; i++) {
+    const d = document.createElement('div'); d.innerHTML = svgHeart(14 + Math.random() * 18);
+    const s = d.firstChild; s.classList.add('pop');
+    s.style.left = cx + 'px'; s.style.top = cy + 'px';
+    const a = Math.random() * Math.PI * 2, dist = 120 + Math.random() * 220;
+    s.style.setProperty('--x', Math.cos(a) * dist + 'px');
+    s.style.setProperty('--y', Math.sin(a) * dist - 80 + 'px');
+    s.style.setProperty('--r', (Math.random() * 90 - 45) + 'deg');
+    document.body.append(s); setTimeout(() => s.remove(), 1700);
+  }
+}
+
+onScroll();
+}
+</script>
+</body>
+</html>
